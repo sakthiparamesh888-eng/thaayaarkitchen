@@ -1,0 +1,1747 @@
+/***************************************************
+  ROOT VARIABLES — Modern Blue Glass Theme
+***************************************************/
+:root {
+  --bg: #071026;
+  --panel: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.12);
+  --glass: rgba(255,255,255,0.06);
+  --muted: #9fbbe0;
+  --accent: #3b82f6;
+  --accent-d: #2563eb;
+  --accent-teal: #2dd4bf;
+  --text: #e6f0f8;
+  --radius: 16px;
+  --shadow: 0 8px 30px rgba(2,6,23,.6);
+  --blur: 12px;
+}
+
+/***************************************************
+  RESET + BODY
+***************************************************/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
+  background: radial-gradient(
+    1200px 400px at 8% 10%,
+    #05243a 0%,
+    rgba(7,16,38,0.9) 30%,
+    #041020 100%
+  );
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 0 18px;
+}
+
+/***************************************************
+  HEADER — Modern Glass Sticky Navbar
+***************************************************/
+.glass-header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  backdrop-filter: blur(var(--blur));
+  background: rgba(0, 20, 60, 0.45);
+  box-shadow: 0 4px 22px rgba(0, 140, 255, 0.25);
+  border-bottom: 1px solid rgba(0, 140, 255, 0.35);
+  z-index: 999;
+}
+
+.header-inner {
+  max-width: 1250px;
+  margin: auto;
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo {
+  width: 46px; /* Set a fixed width */
+  height: 46px; /* Set the same fixed height to make it square */
+  border-radius: 12px; /* Optional: gives a rounded corner effect */
+  object-fit: cover; /* Ensures the image fills the container while preserving its aspect ratio */
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.6); /* Optional: shadow effect */
+}
+
+
+.brand-name {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #dff1ff;
+  letter-spacing: -0.5px;
+}
+
+/* Desktop Links */
+.nav-links {
+  display: flex;
+  gap: 26px;
+}
+
+.nav-links a {
+  color: #d8eaff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  transition: 0.25s;
+}
+
+/* Hover Glow */
+.nav-links a:hover {
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(90,160,255,0.8);
+}
+
+/* Hamburger (Mobile Only) */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  width: 26px;
+  height: 3px;
+  background: white;
+  border-radius: 6px;
+}
+
+/***************************************************
+  MOBILE SLIDE MENU
+***************************************************/
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(6px);
+  z-index: 999;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 72%;
+  height: 100vh;
+  padding: 40px 26px;
+  background: rgba(0,30,80,0.85);
+  backdrop-filter: blur(var(--blur));
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  box-shadow: -4px 0 20px rgba(0,140,255,.35);
+  transition: 0.35s ease;
+  z-index: 1000;
+}
+
+.mobile-menu.show {
+  right: 0;
+}
+
+.mobile-menu a {
+  color: var(--text);
+  font-size: 1.2rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.close-btn {
+  align-self: flex-end;
+  font-size: 1.8rem;
+  color: white;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/***************************************************
+  PAGE TITLES
+***************************************************/
+.page-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/***************************************************
+  MEAL BANNERS
+***************************************************/
+.banner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap: 22px;
+}
+
+.meal-banner {
+  padding: 24px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(var(--blur));
+  transition: 0.25s ease;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.meal-banner:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.35);
+}
+
+.meal-emoji {
+  font-size: 44px;
+  margin-bottom: 12px;
+}
+
+.active-meal {
+  border: 2px solid #4caeff;
+  box-shadow: 0 0 25px rgba(76,174,255,.5);
+}
+
+.inactive-meal {
+  opacity: .55;
+  filter: blur(.4px);
+}
+
+/***************************************************
+  PRODUCT GRID + CARDS
+***************************************************/
+.grid {
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+}
+
+.food-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(var(--blur));
+  min-height: 340px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  transition: 0.25s;
+}
+
+.food-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px rgba(2,8,26,0.65);
+}
+
+.card-img-box {
+  height: 160px;
+  overflow: hidden;
+  position: relative;
+}
+
+.food-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: .35s ease;
+}
+
+.food-card:hover .food-img {
+  transform: scale(1.06);
+}
+
+.img-overlay {
+  position: absolute;
+  left: -100%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,.05), transparent);
+  transition: .6s;
+}
+
+.food-card:hover .img-overlay {
+  left: 100%;
+}
+
+.food-info {
+  padding: 18px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.food-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.food-info p {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  color: var(--accent-teal);
+  font-weight: 700;
+}
+
+/***************************************************
+  BUTTONS
+***************************************************/
+.btn-primary {
+  padding: 10px 18px;
+  background: linear-gradient(180deg,var(--accent),var(--accent-d));
+  color: white;
+  border-radius: 40px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(43,156,255,.28);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/***************************************************
+  CHECKOUT LAYOUT
+***************************************************/
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 24px;
+}
+
+.checkout-card {
+  display: flex;
+  gap: 16px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: var(--radius);
+  backdrop-filter: blur(var(--blur));
+}
+
+.checkout-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/***************************************************
+  FLOATING CART
+***************************************************/
+.floating-cart {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  background: var(--accent-d);
+  padding: 14px 18px;
+  color: white;
+  border-radius: 50px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+}
+
+/***************************************************
+  SUCCESS PAGE
+***************************************************/
+.success-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.success-card {
+  padding: 34px;
+  background: var(--glass);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  text-align: center;
+  max-width: 420px;
+  width: 92%;
+}
+
+/***************************************************
+  MOBILE RESPONSIVE
+***************************************************/
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .checkout-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 500px) {
+  .grid { grid-template-columns: 1fr; }
+  .banner-grid { grid-template-columns: 1fr; }
+  .card-img-box { height: 140px; }
+}
+/* ============================================
+   FLOATING TOOLS (WhatsApp + Cart)
+   Modern Neon Glass Buttons
+============================================ */
+.fab-whatsapp,
+.fab-cart {
+  position: fixed;
+  right: 22px;
+  z-index: 9999;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  transition: 0.25s ease;
+}
+
+/* WhatsApp Button */
+.fab-whatsapp {
+  bottom: 22px;
+  width: 56px;
+  height: 56px;
+  background: rgba(37, 211, 102, 0.85);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.fab-whatsapp:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(37, 211, 102, 0.55);
+}
+
+/* Cart Button */
+.fab-cart {
+  bottom: 92px; /* above WhatsApp */
+  background: rgba(37, 99, 235, 0.85);
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  gap: 10px;
+  height: 50px;
+  color: white;
+}
+
+.fab-cart:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.55);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 500px) {
+  .fab-cart {
+    bottom: 85px;
+    right: 18px;
+    padding: 8px 14px;
+    height: 46px;
+  }
+
+  .fab-whatsapp {
+    bottom: 18px;
+    right: 18px;
+    width: 50px;
+    height: 50px;
+  }
+}
+/* INACTIVE — coming soon meals */
+.inactive-meal {
+  opacity: 0.45;
+  filter: blur(1.5px) brightness(0.8);
+  cursor: not-allowed !important;
+  pointer-events: none; /* FULLY BLOCK CLICK */
+  transform: none !important;
+  box-shadow: none !important;
+}
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Fade */
+.fade-in {
+  animation: fadePop 0.5s ease;
+}
+@keyframes fadePop {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Support Badge */
+.support-badge {
+  padding: 14px 20px;
+  background: rgba(0, 150, 255, 0.12);
+  border: 1px solid rgba(0,150,255,0.3);
+  border-radius: 14px;
+  color: #bcdcff;
+  cursor: pointer;
+  width: fit-content;
+  backdrop-filter: blur(10px);
+  margin-bottom: 20px;
+  box-shadow: 0 0 18px rgba(0,150,255,0.18);
+}
+
+/* Checkout Cards New */
+.checkout-card-new {
+  display: flex;
+  padding: 16px;
+  border-radius: 18px;
+  gap: 18px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.checkout-img-new {
+  width: 90px;
+  height: 90px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.checkout-content {
+  flex: 1;
+}
+
+.checkout-title-new {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e7f0ff;
+}
+
+.checkout-price-line {
+  margin-top: 4px;
+  font-weight: 600;
+  color: #9fd4ff;
+}
+
+.checkout-dayTag {
+  font-size: 0.9rem;
+  color: #8fb9ff;
+  margin-top: 6px;
+}
+
+.checkout-cat {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #9fbbe0;
+}
+
+.qty-controls-modern {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qty-controls-modern button {
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  background: #1b4da3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.remove-btn-modern {
+  margin-top: 10px;
+  color: #ff7373;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Price Right */
+.checkout-total-new {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #9ee7ff;
+}
+
+
+/* SUMMARY BOX */
+.summary-box {
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 25px rgba(0,0,0,0.3);
+}
+
+.summary-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.sub-text {
+  font-size: 0.8rem;
+  color: #9fbbe0;
+}
+
+.summary-row-new {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 1.1rem;
+}
+
+.summary-amount-new {
+  font-weight: 700;
+  color: #4dc8ff;
+}
+
+/* QR BOX */
+.qr-box-new {
+  padding: 20px;
+  border-radius: 18px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.qr-title-new {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.qr-image-new {
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,128,255,0.35);
+}
+
+.pay-now-link {
+  display: block;
+  margin-top: 12px;
+  padding: 12px;
+  background: #0096ff;
+  color: white;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-pay-modern {
+  width: 100%;
+  padding: 14px;
+  background: #2563eb;
+  color: white;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.btn-whatsapp-modern {
+  background: #22c55e;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  color: white;
+  margin-top: 10px;
+}
+
+.btn-clear-modern {
+  width: 100%;
+  background: rgba(255,0,0,0.15);
+  border: 1px solid rgba(255,80,80,0.4);
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #ff6666;
+}
+/* SUMMARY CARD */
+.better-summary {
+  padding: 28px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 35px rgba(0, 150, 255, 0.2);
+}
+
+/* Titles */
+.summary-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #e8f1ff;
+  margin-bottom: 15px;
+}
+
+.summary-sub {
+  font-size: 0.9rem;
+  color: #b0c8e6;
+  font-weight: 400;
+}
+
+/* Summary Row */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  margin: 16px 0;
+  color: #d5e9ff;
+}
+
+.summary-amount {
+  font-weight: 700;
+  color: #58a6ff;
+}
+
+/* Slot Selector */
+.modern-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  color: #dff2ff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  margin-top: 6px;
+}
+
+/* QR CARD */
+.qr-heading {
+  margin-top: 25px;
+  font-size: 1.4rem;
+  color: #e9f3ff;
+  text-align: center;
+  font-weight: 700;
+}
+
+.qr-card {
+  width: 100%;
+  background: rgba(255,255,255,0.09);
+  padding: 18px;
+  border-radius: 14px;
+  margin: 15px 0;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.14);
+}
+
+.qr-img {
+  width: 180px;
+  border-radius: 12px;
+}
+
+.qr-note {
+  margin: 8px 0;
+  color: #c5dbf7;
+  text-align: center;
+}
+
+/* Buttons */
+.btn-primary-pay {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  margin-top: 10px;
+  background: linear-gradient(90deg, #1d8bff, #0062ff);
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 0 15px rgba(0,150,255,0.4);
+  text-decoration: none;
+}
+
+.btn-confirm {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #2c6dff;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  box-shadow: 0 0 18px rgba(0,140,255,0.35);
+}
+
+.btn-outline {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  color: #9cc7ff;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-weight: 600;
+}
+
+.btn-outline.remove {
+  color: #ff7777;
+  border-color: rgba(255, 120, 120, 0.4);
+}
+
+.btn-whatsapp-final {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  background: #25d366;
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 0 12px rgba(37, 211, 102, 0.4);
+}
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  padding: 30px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 22px rgba(0,150,255,0.25);
+}
+
+.auth-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  text-align: center;
+  color: #dff2ff;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: #9fbbe0;
+  margin-bottom: 20px;
+}
+
+.auth-label {
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #d2e2ff;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.25);
+  color: white;
+}
+
+.auth-group { display: flex; flex-direction: column; }
+
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2563eb;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  margin-top: 6px;
+  box-shadow: 0 0 15px rgba(0,140,255,0.45);
+}
+
+.auth-clear {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border-radius: 10px;
+  color: #ff7373;
+  border: 1px solid rgba(255,120,120,0.4);
+}
+
+.auth-note {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #9fbbe0;
+}
+.checkmark-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  background: rgba(0,200,0,0.12);
+  border: 3px solid rgba(0,255,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkmark {
+  width: 40px;
+  height: 20px;
+  border-left: 4px solid #3bff7d;
+  border-bottom: 4px solid #3bff7d;
+  transform: rotate(-45deg);
+}
+
+.success-section {
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.success-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  margin-top: 20px;
+  box-shadow: 0 0 15px rgba(0,140,255,0.45);
+}
+.success-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.success-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.06);
+  padding: 28px;
+  border-radius: 22px;
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,140,255,0.25);
+}
+
+/* Title + Subtitle */
+.success-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.success-sub {
+  color: #9fbbe0;
+  margin-bottom: 20px;
+}
+
+/* Sections */
+.success-box {
+  background: rgba(255,255,255,0.05);
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+}
+
+.success-box h3 {
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+/* Checklist */
+.success-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #cfe4ff;
+}
+.success-list li {
+  margin: 6px 0;
+}
+
+/* Checkmark */
+.checkmark-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid rgba(50,255,110,0.4);
+  background: rgba(50,255,110,0.1);
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkmark {
+  width: 35px;
+  height: 18px;
+  border-left: 4px solid #29ff6f;
+  border-bottom: 4px solid #29ff6f;
+  transform: rotate(-45deg);
+}
+
+/* Button */
+.success-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 0;
+  border-radius: 14px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  font-size: 1.05rem;
+  box-shadow: 0 0 15px rgba(0,140,255,0.45);
+}
+.vintage-font {
+  font-family: "Rock Salt", cursive;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+.lugrasimo {
+  font-family: "Lugrasimo", cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.6rem;
+  letter-spacing: 1.5px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+.btn-modern-pay {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  text-align: center;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #007bff, #0054d1);
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 800;
+  box-shadow: 0 0 18px rgba(0,120,255,0.45);
+  text-decoration: none;
+  margin-top: 12px;
+  transition: 0.25s ease;
+}
+
+.btn-modern-pay:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 26px rgba(90,180,255,0.6);
+}
+/* 🌟 Glassmorphism QR Frame */
+.qr-glass-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.qr-glass-frame {
+  padding: 18px;
+  width: 240px;
+  height: 240px;
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 18px rgba(0, 140, 255, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: glassPulse 2.8s infinite ease-in-out;
+}
+
+.qr-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+}
+
+/* ✨ Animated Glass Glow */
+@keyframes glassPulse {
+  0% {
+    box-shadow: 0 0 12px rgba(0, 140, 255, 0.35);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(0, 140, 255, 0.75);
+    transform: scale(1.03);
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(0, 140, 255, 0.35);
+    transform: scale(1);
+  }
+}
+
+/* 🔵 Blinking "Scan to Pay" Text */
+.blink-scan {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #8ecaff;
+  animation: blinkText 1.3s infinite ease-in-out;
+}
+
+@keyframes blinkText {
+  0% { opacity: 0.45; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-2px); }
+  100% { opacity: 0.45; transform: translateY(0); }
+}
+/* FOOD CARD MICRO ANIMATIONS */
+.food-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (min-width: 768px) {
+  .food-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 0 18px rgba(0, 150, 255, 0.30);
+    border-radius: 18px;
+  }
+}
+.brand-name {
+  font-family: 'Trade Winds', cursive;
+  font-size: 1.75rem; /* tweak as desired */
+  letter-spacing: 0.8px;
+  color: #fff;
+}
+.grid {
+  display: grid;
+  justify-content: center;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 350px));
+}
+
+.food-card {
+  max-width: 350px;
+  margin: 0 auto;
+}
+/* Hamburger menu styles */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Hamburger lines */
+.hamburger .line {
+  height: 3px;
+  background-color: white; /* White color for the lines */
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px white, 0 0 20px white, 0 0 30px white; /* Glow effect */
+}
+/* Tooltip for Cart Button */
+/* Floating Cart Button */
+/* Floating Cart Button */
+.fab-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 90px; /* Slightly offset from the WhatsApp button */
+  background-color: #ff5722;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  z-index: 101;
+  transition: background-color 0.15s;
+  font-weight: bold;
+  animation: glow 1.2s infinite ease-in-out;
+}
+
+/* Tooltip Text */
+.fab-cart .cart-tooltip {
+  position: absolute;
+  bottom: 45px;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 102;
+  pointer-events: none;
+  transform: translateY(10px); /* Initial position below */
+}
+
+/* Show Tooltip when hovering over the cart button */
+.fab-cart.show-tooltip .cart-tooltip {
+  display: block;
+  opacity: 1;
+  transform: translateY(0); /* Move up */
+}
+
+/* Glowing effect for Cart Icon */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 12px rgba(255, 87, 34, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 87, 34, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 12px rgba(255, 87, 34, 0.3);
+  }
+}
+.fab-whatsapp {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25d366;
+  border-radius: 999px;
+  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  z-index: 999;
+}
+
+.fab-help-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+/* FIXED FOOD CARD SIZE */
+.food-card {
+  width: 308px !important;
+  height: 406px !important;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* FIX IMAGE CONTAINER */
+.food-card .card-img-box {
+  width: 100%;
+  height: 180px !important;
+  padding: 0;
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* FIX IMAGE FITTING */
+.food-card .food-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* INFORMATION AREA (TITLE + DESC + BUTTON) */
+.food-info {
+  padding: 16px;
+  height: calc(406px - 180px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.logo-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logo-text.eng {
+  font-family: "Zilla Slab", serif; /* or whatever you used */
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1px;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.35);
+}
+
+.logo-text.tam {
+  font-family: "Noto Sans Tamil", sans-serif; /* BEST clean Tamil font */
+  font-size: 20px;
+  font-weight: 600;
+  color: #f8d49b; /* gold tint */
+  margin-top: 2px;
+  text-shadow: 0 0 10px rgba(255, 200, 120, 0.4);
+}
+/* HEADER WRAPPER */
+.glass-header {
+  width: 100%;
+  backdrop-filter: blur(10px);
+  background: rgba(4, 16, 36, 0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.header-inner {
+  max-width: 1300px;
+  margin: auto;
+  padding: 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BRAND ALIGNMENT */
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-logo {
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 0 12px rgba(255,255,255,0.15);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* ENGLISH TITLE */
+.brand-en {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255,255,255,0.35);
+}
+
+/* TAMIL TITLE */
+.brand-ta {
+  margin-top: 2px;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #f5d27b; /* golden tone */
+  text-shadow: 0 0 10px rgba(245,210,120,0.45);
+}
+
+/* DESKTOP NAV */
+.nav-links {
+  display: flex;
+  gap: 34px;
+}
+
+.nav-links a {
+  color: #dbeafe;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: 0.25s;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px #9bcaff;
+}
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
+.line {
+  width: 26px;
+  height: 3px;
+  margin: 4px;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 0 10px white;
+}
+
+/* MOBILE */
+@media (max-width: 880px) {
+  .nav-links {
+    display: none;
+  }
+  .hamburger {
+    display: block;
+    color: white;
+  }
+}
+/* MOBILE BRAND FIX */
+@media (max-width: 768px) {
+
+  .header-inner {
+    display: flex;
+    justify-content: space-between !important;
+    align-items: center;
+  }
+
+  .brand-block {
+    max-width: 65%;   /* 🔥 prevents logo + text from pushing hamburger */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-text {
+    flex-shrink: 1; /* allow text to shrink on mobile */
+  }
+
+  .brand-en {
+    font-size: 1.2rem !important;
+  }
+
+  .brand-ta {
+    font-size: 0.9rem !important;
+  }
+
+  .hamburger {
+    display: flex !important;
+    flex-direction: column;
+    z-index: 99999 !important;
+  }
+
+  .hamburger .line {
+    background: white !important;
+    box-shadow: 0 0 10px white;
+  }
+}
+/* Brand Block Layout */
+.brand-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+/* English */
+.brand-en {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255,255,255,0.3);
+}
+
+/* Tamil */
+.brand-ta {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffd86b;
+  margin-top: -4px;
+  text-shadow: 0 0 10px rgba(255,215,140,0.4);
+}
+/* Hamburger visible on mobile */
+.hamburger {
+  display: none;
+}
+
+.hamburger .line {
+  width: 28px;
+  height: 3px;
+  background-color: white;    /* FIX: white lines */
+  border-radius: 4px;
+  box-shadow: 0 0 10px white; /* glow */
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+  }
+}
+@media (max-width: 768px) {
+  .brand-block {
+    gap: 14px;
+  }
+
+  .brand-en {
+    font-size: 1.3rem;
+  }
+
+  .brand-ta {
+    font-size: 1rem;
+  }
+}
+/* RESET ALL OLD HAMBURGER RULES */
+.hamburger,
+.hamburger span,
+.hamburger .line {
+  all: unset;
+}
+
+/* NEW CLEAN HAMBURGER BUTTON */
+.hamburger {
+  display: none;
+  width: 30px;
+  height: 22px;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 99999;
+}
+
+.hamburger .line {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 0 10px white;
+}
+
+/* MOBILE VISIBILITY */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none !important;
+  }
+  .hamburger {
+    display: flex !important;
+  }
+}
+/* ========== HAMBURGER → CLOSE (X) ANIMATION ========== */
+
+.hamburger {
+  display: none;
+  width: 30px;
+  height: 22px;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 99999;
+}
+
+.hamburger .line {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 0 10px white;
+  transition: all 0.3s ease;
+}
+
+/* When menu is open: animate to X */
+.hamburger.open .line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.open .line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open .line:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Show hamburger on mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex !important;
+  }
+}
+/* ========================================
+   MODERN GLOW + PERFECT SPACING (EN + TA)
+======================================== */
+
+/* Wrapper */
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  margin-top: 0px;
+}
+
+/* English Title */
+.brand-en {
+  font-family: "Lugrasimo", cursive;
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+
+  color: #ffffff;
+
+  /* Strong glow */
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.65),
+    0 0 14px rgba(120,170,255,0.7),
+    0 0 28px rgba(120,170,255,0.45);
+  
+  margin-bottom: 2px;   /* Perfect spacing above Tamil */
+}
+
+/* Tamil Title */
+.brand-ta {
+  font-family: "Noto Sans Tamil", sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: #ffd982;
+
+  /* Warm gold glow */
+  text-shadow:
+    0 0 6px rgba(255,215,120,0.55),
+    0 0 14px rgba(255,190,90,0.45),
+    0 0 24px rgba(255,170,60,0.35);
+}
+
+/* Mobile Fine Tuning */
+@media (max-width: 768px) {
+  .brand-en {
+    font-size: 1.3rem;
+    letter-spacing: 1.1px;
+  }
+
+  .brand-ta {
+    font-size: 1.02rem;
+  }
+}
+/* 📱 SMALL SCREEN BRAND FIX */
+@media (max-width: 480px) {
+
+  .brand-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 83%;
+    overflow: hidden;
+    flex-shrink: 1;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+    overflow: hidden;
+    white-space: nowrap;  /* prevents line breaks */
+  }
+
+  .brand-en {
+    font-size: 1.08rem !important;
+    font-weight: 800;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .brand-ta {
+    font-size: 1.2rem !important;
+    white-space: nowrap;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .hamburger {
+    display: flex !important;
+    z-index: 99999;
+  }
+}
+/* BRAND TEXT GLOW — FINAL VERSION */
+
+/* Main English Title */
+.brand-en {
+  font-family: "Lugrasimo", cursive;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ffffff;
+
+  /* Smooth neon white glow */
+  text-shadow:
+    0 0 4px rgba(255,255,255,0.8),
+    0 0 8px rgba(255,255,255,0.6),
+    0 0 14px rgba(255,255,255,0.4);
+}
+
+/* Tamil Subtitle */
+.brand-ta {
+  font-family: "Noto Sans Tamil", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffd86b;
+
+  /* Golden Glow */
+  text-shadow:
+    0 0 4px rgba(255,215,100,0.9),
+    0 0 10px rgba(255,200,80,0.7),
+    0 0 18px rgba(255,180,60,0.5);
+
+  margin-top: -2px;
+}
+
+/* MOBILE FIXED ALIGNMENT */
+@media (max-width: 768px) {
+  .brand-en {
+    font-size: 2rem;
+  }
+  .brand-ta {
+    font-size: 0.95rem;
+  }
+}
