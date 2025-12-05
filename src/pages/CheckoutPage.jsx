@@ -10,7 +10,6 @@ export default function CheckoutPage() {
   const [slot, setSlot] = useState("11:00 AM – 01:00 PM");
   const [user, setUser] = useState(null);
 
-  // ✅ NEW: Prevent double click
   const [isPaying, setIsPaying] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -18,14 +17,21 @@ export default function CheckoutPage() {
   const STORE_NAME = import.meta.env.VITE_STORE_NAME || "Thaayar Kitchen";
   const ORDERS_WEBHOOK = import.meta.env.VITE_ORDERS_WEBHOOK;
 
-  // ✅ SAFE UPI ID
   const UPI_ID = "8524845927@okbizaxis";
 
+  // ✅ ✅ ✅ FIXED USER LOAD (WORKS IN HOSTING)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      let raw = localStorage.getItem(STORAGE_KEY);
+
+      // ✅ fallback for production mismatch
+      if (!raw) raw = localStorage.getItem("user");
+      if (!raw) raw = localStorage.getItem("Thaayar_Kitchen_user");
+
       if (raw) setUser(JSON.parse(raw));
-    } catch {}
+    } catch (err) {
+      console.error("User Load Error:", err);
+    }
   }, []);
 
   function availableSlots() {
@@ -41,7 +47,6 @@ export default function CheckoutPage() {
     return map;
   }
 
-  // ✅ SAFE HTTPS UPI PAYMENT LINK
   function getUpiLink() {
     const name = encodeURIComponent(STORE_NAME);
     const amount = total;
@@ -127,7 +132,6 @@ Delivery Slot: ${slot}
     }
   }
 
-  // ✅ FIXED PAYMENT (NO DOUBLE CLICK)
   function handleConfirmPayment() {
     if (!user) return alert("Please sign up before confirming your payment.");
     if (isPaying) return;
@@ -138,10 +142,9 @@ Delivery Slot: ${slot}
     setTimeout(() => {
       setVerified(true);
       setIsPaying(false);
-    }, 2500); // ✅ faster verification
+    }, 2500);
   }
 
-  // ✅ FAST WHATSAPP REDIRECTION (NO DOUBLE CLICK)
   async function handleSend() {
     if (!verified) return alert("Confirm payment first.");
     if (isSending) return;
@@ -149,7 +152,7 @@ Delivery Slot: ${slot}
     setIsSending(true);
 
     const finalOrderId = await sendOrderToSheet(Date.now());
-    window.location.href = whatsappLink(finalOrderId); // ✅ FASTEST REDIRECT
+    window.location.href = whatsappLink(finalOrderId);
 
     clearCart();
     setTimeout(() => (window.location.href = "/success"), 800);
@@ -206,7 +209,6 @@ Delivery Slot: ${slot}
             <span className="summary-amount">₹{total}</span>
           </div>
 
-          {/* ✅ PAYMENT BUTTON */}
           <button
             className="btn-confirm"
             onClick={handleConfirmPayment}
@@ -216,7 +218,6 @@ Delivery Slot: ${slot}
             {isPaying ? "Opening UPI..." : `💳 Pay ₹${total} via UPI`}
           </button>
 
-          {/* ✅ SEND TO WHATSAPP */}
           <button
             className="btn-whatsapp-final"
             disabled={!verified || !user || isSending}
