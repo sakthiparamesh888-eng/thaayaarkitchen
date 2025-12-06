@@ -1,4 +1,3 @@
-// src/pages/CheckoutPage.jsx
 import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 
@@ -6,8 +5,9 @@ const STORAGE_KEY = "Thaayar Kitchen_user";
 
 export default function CheckoutPage() {
   const { cart, total, updateQty, removeFromCart, clearCart } = useCart();
+
   const [verified, setVerified] = useState(false);
-  const [slot, setSlot] = useState("11:00 AM – 01:00 PM");
+  const [slot] = useState("11:00 AM – 01:00 PM");
   const [user, setUser] = useState(null);
 
   const [isPaying, setIsPaying] = useState(false);
@@ -19,24 +19,32 @@ export default function CheckoutPage() {
 
   const UPI_ID = "8524845927@okbizaxis";
 
-  // ✅ ✅ ✅ FIXED USER LOAD (WORKS IN HOSTING)
+  // ✅ LOAD USER (PRODUCTION SAFE)
   useEffect(() => {
     try {
       let raw = localStorage.getItem(STORAGE_KEY);
-
-      // ✅ fallback for production mismatch
       if (!raw) raw = localStorage.getItem("user");
       if (!raw) raw = localStorage.getItem("Thaayar_Kitchen_user");
 
-      if (raw) setUser(JSON.parse(raw));
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.name && parsed?.phone) {
+          setUser(parsed);
+        }
+      }
     } catch (err) {
       console.error("User Load Error:", err);
     }
   }, []);
 
-  function availableSlots() {
-    return ["11:00 AM – 01:00 PM"];
-  }
+  // ✅ RESET PAYMENT FOR EVERY NEW ORDER
+  useEffect(() => {
+    if (cart.length === 0) {
+      setVerified(false);
+      setIsPaying(false);
+      setIsSending(false);
+    }
+  }, [cart.length]);
 
   function group(items) {
     const map = {};
@@ -60,11 +68,16 @@ export default function CheckoutPage() {
     let itemsText = "";
 
     Object.keys(grouped).forEach((day) => {
-      const dateLabel = new Date(grouped[day][0].deliveryDate).toLocaleDateString();
+      const dateLabel = new Date(
+        grouped[day][0].deliveryDate
+      ).toLocaleDateString();
+
       itemsText += `${day} (${dateLabel}):\n`;
+
       grouped[day].forEach((i) => {
         itemsText += `- ${i.qty || 1}x ${i.name}\n`;
       });
+
       itemsText += "\n";
     });
 
@@ -88,7 +101,7 @@ Delivery Slot: ${slot}
   }
 
   async function sendOrderToSheet(orderId) {
-    if (!ORDERS_WEBHOOK) return null;
+    if (!ORDERS_WEBHOOK) return orderId;
 
     const now = new Date();
     const orderPlacedAt = now.toLocaleString("en-IN", {
@@ -125,16 +138,20 @@ Delivery Slot: ${slot}
 
       const data = await res.json();
       if (data?.success && data?.orderId) return data.orderId;
-      return null;
+      return orderId;
     } catch (err) {
       console.error("Sheet ERROR:", err);
-      return null;
+      return orderId;
     }
   }
 
+  // ✅ PAYMENT (ALWAYS WORKS)
   function handleConfirmPayment() {
     if (!user) return alert("Please sign up before confirming your payment.");
     if (isPaying) return;
+
+    setVerified(false);
+    setIsSending(false);
 
     setIsPaying(true);
     window.open(getUpiLink(), "_blank");
@@ -142,20 +159,33 @@ Delivery Slot: ${slot}
     setTimeout(() => {
       setVerified(true);
       setIsPaying(false);
-    }, 2500);
+    }, 2000);
   }
 
+  // ✅✅✅ FAST WHATSAPP OPEN (MAIN FIX)
   async function handleSend() {
     if (!verified) return alert("Confirm payment first.");
     if (isSending) return;
 
     setIsSending(true);
 
-    const finalOrderId = await sendOrderToSheet(Date.now());
-    window.location.href = whatsappLink(finalOrderId);
+    const orderId = Date.now();
+    const finalOrderId = await sendOrderToSheet(orderId);
 
-    clearCart();
-    setTimeout(() => (window.location.href = "/success"), 800);
+    const waLink = whatsappLink(finalOrderId);
+
+    // ✅ INSTANT OPEN — NO DELAY, NO BLOCK
+    window.open(waLink, "_blank");
+
+    setTimeout(() => {
+      clearCart();
+      setVerified(false);
+      setIsSending(false);
+    }, 300);
+
+    setTimeout(() => {
+      window.location.href = "/success";
+    }, 700);
   }
 
   return (
@@ -164,7 +194,9 @@ Delivery Slot: ${slot}
 
       <div className="checkout-layout">
         <div className="checkout-items">
-          {cart.length === 0 && <div className="glass-empty">Your cart is empty</div>}
+          {cart.length === 0 && (
+            <div className="glass-empty">Your cart is empty</div>
+          )}
 
           {cart.map((it) => (
             <div className="glass-card checkout-card-new" key={it.id}>
@@ -176,12 +208,26 @@ Delivery Slot: ${slot}
 
               <div className="checkout-content">
                 <div className="checkout-title-new">{it.name}</div>
-                <div className="checkout-price-line">₹{it.price} × {it.qty || 1}</div>
+                <div className="checkout-price-line">
+                  ₹{it.price} × {it.qty || 1}
+                </div>
 
                 <div className="qty-controls-modern">
-                  <button onClick={() => updateQty(it.id, (it.qty || 1) - 1)}>−</button>
+                  <button
+                    onClick={() =>
+                      updateQty(it.id, Math.max(1, (it.qty || 1) - 1))
+                    }
+                  >
+                    −
+                  </button>
+
                   <span>{it.qty || 1}</span>
-                  <button onClick={() => updateQty(it.id, (it.qty || 1) + 1)}>+</button>
+
+                  <button
+                    onClick={() => updateQty(it.id, (it.qty || 1) + 1)}
+                  >
+                    +
+                  </button>
                 </div>
 
                 <button
@@ -201,7 +247,8 @@ Delivery Slot: ${slot}
 
         <div className="checkout-summary glass-card better-summary">
           <h2 className="summary-title">
-            Order Summary <span className="summary-sub">(Includes delivery)</span>
+            Order Summary{" "}
+            <span className="summary-sub">(Includes delivery)</span>
           </h2>
 
           <div className="summary-row">
@@ -212,8 +259,11 @@ Delivery Slot: ${slot}
           <button
             className="btn-confirm"
             onClick={handleConfirmPayment}
-            disabled={!user || isPaying}
-            style={{ opacity: !user || isPaying ? 0.4 : 1, marginTop: 15 }}
+            disabled={!user || isPaying || cart.length === 0}
+            style={{
+              opacity: !user || isPaying || cart.length === 0 ? 0.4 : 1,
+              marginTop: 15,
+            }}
           >
             {isPaying ? "Opening UPI..." : `💳 Pay ₹${total} via UPI`}
           </button>
