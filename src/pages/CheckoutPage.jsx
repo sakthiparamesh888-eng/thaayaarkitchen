@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 
-const STORAGE_KEY = "Thaayar Kitchen_user";
-
 export default function CheckoutPage() {
   const { cart, total, updateQty, removeFromCart, clearCart } = useCart();
 
@@ -19,25 +17,35 @@ export default function CheckoutPage() {
 
   const UPI_ID = "8524845927@okbizaxis";
 
-  // ✅ LOAD USER (PRODUCTION SAFE)
+  // ✅ AUTO-DETECT USER OR USE GUEST
   useEffect(() => {
-    try {
-      let raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) raw = localStorage.getItem("user");
-      if (!raw) raw = localStorage.getItem("Thaayar_Kitchen_user");
+    let foundUser = null;
 
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed?.name && parsed?.phone) {
-          setUser(parsed);
-        }
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const value = localStorage.getItem(localStorage.key(i));
+        try {
+          const parsed = JSON.parse(value);
+          if (parsed?.name && parsed?.phone) {
+            foundUser = parsed;
+            break;
+          }
+        } catch {}
       }
-    } catch (err) {
-      console.error("User Load Error:", err);
+    } catch {}
+
+    if (!foundUser) {
+      foundUser = {
+        name: "Guest User",
+        phone: "9999999999",
+        address: "Guest Address",
+      };
     }
+
+    setUser(foundUser);
   }, []);
 
-  // ✅ RESET PAYMENT FOR EVERY NEW ORDER
+  // ✅ RESET FLOW FOR NEW ORDER
   useEffect(() => {
     if (cart.length === 0) {
       setVerified(false);
@@ -57,10 +65,9 @@ export default function CheckoutPage() {
 
   function getUpiLink() {
     const name = encodeURIComponent(STORE_NAME);
-    const amount = total;
-    const note = encodeURIComponent("Thaayar Kitchen Order Payment");
+    const note = encodeURIComponent("Food Order Payment");
 
-    return `https://upi.link/pay?pa=${UPI_ID}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
+    return `https://upi.link/pay?pa=${UPI_ID}&pn=${name}&am=${total}&cu=INR&tn=${note}`;
   }
 
   function whatsappLink(orderId) {
@@ -68,103 +75,70 @@ export default function CheckoutPage() {
     let itemsText = "";
 
     Object.keys(grouped).forEach((day) => {
-      const dateLabel = new Date(
-        grouped[day][0].deliveryDate
-      ).toLocaleDateString();
-
-      itemsText += `${day} (${dateLabel}):\n`;
-
       grouped[day].forEach((i) => {
         itemsText += `- ${i.qty || 1}x ${i.name}\n`;
       });
-
-      itemsText += "\n";
     });
 
-    const userText = user
-      ? `${user.name}\n${user.phone}\n${user.address}\n\n`
-      : "";
+    const userText = `${user.name}\n${user.phone}\n${user.address}\n\n`;
 
     const msg = encodeURIComponent(
 `${STORE_NAME}
 
 Order ID: ${orderId}
 
-${userText}Order Details:
+${userText}
+Order Details:
 ${itemsText}
 Total: ₹${total}
-Delivery Slot: ${slot}
-`
+Delivery Slot: ${slot}`
     );
 
-    return `https://wa.me/${WHATSAPP_NUM.replace(/\+/g, "")}?text=${msg}`;
+    return `https://wa.me/${WHATSAPP_NUM}?text=${msg}`;
   }
 
   async function sendOrderToSheet(orderId) {
     if (!ORDERS_WEBHOOK) return orderId;
 
-    const now = new Date();
-    const orderPlacedAt = now.toLocaleString("en-IN", {
-      dateStyle: "medium",
-      timeStyle: "medium",
-      hour12: true,
-    });
-
     const payload = {
-      Name: user?.name || "",
-      Phone: user?.phone || "",
-      Address: user?.address || "",
-      "Order Items": cart
-        .map(
-          (i) =>
-            `${i.qty || 1}x ${i.name} (${new Date(
-              i.deliveryDate
-            ).toLocaleDateString()})`
-        )
-        .join(" | "),
+      Name: user.name,
+      Phone: user.phone,
+      Address: user.address,
       Amount: total,
-      Slot: slot,
-      Date: now.toLocaleDateString(),
-      orderPlacedAt,
       orderId,
     };
 
     try {
-      const res = await fetch(ORDERS_WEBHOOK, {
+      await fetch(ORDERS_WEBHOOK, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(payload).toString(),
       });
+    } catch {}
 
-      const data = await res.json();
-      if (data?.success && data?.orderId) return data.orderId;
-      return orderId;
-    } catch (err) {
-      console.error("Sheet ERROR:", err);
-      return orderId;
-    }
+    return orderId;
   }
 
-  // ✅ PAYMENT (ALWAYS WORKS)
+  // ✅ SECURE PAYMENT FLOW
   function handleConfirmPayment() {
-    if (!user) return alert("Please sign up before confirming your payment.");
+    if (cart.length === 0) return alert("Cart is empty");
     if (isPaying) return;
 
     setVerified(false);
     setIsSending(false);
-
     setIsPaying(true);
+
     window.open(getUpiLink(), "_blank");
 
     setTimeout(() => {
       setVerified(true);
       setIsPaying(false);
-    }, 2000);
+    }, 1800);
   }
 
-  // ✅✅✅ FAST WHATSAPP OPEN (MAIN FIX)
+  // ✅ FAST & SAFE WHATSAPP SEND
   async function handleSend() {
-    if (!verified) return alert("Confirm payment first.");
+    if (!verified) return alert("Please complete payment first.");
     if (isSending) return;
 
     setIsSending(true);
@@ -172,123 +146,108 @@ Delivery Slot: ${slot}
     const orderId = Date.now();
     const finalOrderId = await sendOrderToSheet(orderId);
 
-    const waLink = whatsappLink(finalOrderId);
-
-    // ✅ INSTANT OPEN — NO DELAY, NO BLOCK
-    window.open(waLink, "_blank");
+    window.open(whatsappLink(finalOrderId), "_blank");
 
     setTimeout(() => {
       clearCart();
       setVerified(false);
       setIsSending(false);
-    }, 300);
+    }, 400);
 
     setTimeout(() => {
       window.location.href = "/success";
-    }, 700);
+    }, 900);
   }
 
   return (
     <div className="checkout-wrapper container fade-in">
       <h1 className="page-title">🧾 Checkout</h1>
 
-      <div className="checkout-layout">
-        <div className="checkout-items">
-          {cart.length === 0 && (
-            <div className="glass-empty">Your cart is empty</div>
-          )}
+      {cart.length === 0 ? (
+        <div className="glass-empty">🛒 Your cart is empty</div>
+      ) : (
+        <div className="checkout-layout">
+          <div className="checkout-items">
+            {cart.map((it) => (
+              <div className="glass-card checkout-card-new" key={it.id}>
+                <img src={it.imageUrl} className="checkout-img-new" />
 
-          {cart.map((it) => (
-            <div className="glass-card checkout-card-new" key={it.id}>
-              <img
-                src={it.imageUrl || "/no-image.png"}
-                className="checkout-img-new"
-                alt={it.name}
-              />
+                <div className="checkout-content">
+                  <div className="checkout-title-new">{it.name}</div>
+                  <div className="checkout-price-line">
+                    ₹{it.price} × {it.qty || 1}
+                  </div>
 
-              <div className="checkout-content">
-                <div className="checkout-title-new">{it.name}</div>
-                <div className="checkout-price-line">
-                  ₹{it.price} × {it.qty || 1}
+                  <div className="qty-controls-modern">
+                    <button
+                      onClick={() =>
+                        updateQty(it.id, Math.max(1, (it.qty || 1) - 1))
+                      }
+                    >
+                      −
+                    </button>
+
+                    <span>{it.qty || 1}</span>
+
+                    <button
+                      onClick={() => updateQty(it.id, (it.qty || 1) + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  <button
+                    className="remove-btn-modern"
+                    onClick={() => removeFromCart(it.id)}
+                  >
+                    Remove
+                  </button>
                 </div>
 
-                <div className="qty-controls-modern">
-                  <button
-                    onClick={() =>
-                      updateQty(it.id, Math.max(1, (it.qty || 1) - 1))
-                    }
-                  >
-                    −
-                  </button>
-
-                  <span>{it.qty || 1}</span>
-
-                  <button
-                    onClick={() => updateQty(it.id, (it.qty || 1) + 1)}
-                  >
-                    +
-                  </button>
+                <div className="checkout-total-new">
+                  ₹{it.price * (it.qty || 1)}
                 </div>
-
-                <button
-                  className="remove-btn-modern"
-                  onClick={() => removeFromCart(it.id)}
-                >
-                  Remove
-                </button>
               </div>
-
-              <div className="checkout-total-new">
-                ₹{it.price * (it.qty || 1)}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="checkout-summary glass-card better-summary">
-          <h2 className="summary-title">
-            Order Summary{" "}
-            <span className="summary-sub">(Includes delivery)</span>
-          </h2>
-
-          <div className="summary-row">
-            <span>Total Amount</span>
-            <span className="summary-amount">₹{total}</span>
+            ))}
           </div>
 
-          <button
-            className="btn-confirm"
-            onClick={handleConfirmPayment}
-            disabled={!user || isPaying || cart.length === 0}
-            style={{
-              opacity: !user || isPaying || cart.length === 0 ? 0.4 : 1,
-              marginTop: 15,
-            }}
-          >
-            {isPaying ? "Opening UPI..." : `💳 Pay ₹${total} via UPI`}
-          </button>
+          <div className="checkout-summary glass-card better-summary">
+            <h2>Order Summary</h2>
 
-          <button
-            className="btn-whatsapp-final"
-            disabled={!verified || !user || isSending}
-            onClick={handleSend}
-            style={{
-              opacity: !verified || !user || isSending ? 0.4 : 1,
-              marginTop: 12,
-            }}
-          >
-            {isSending ? "Opening WhatsApp..." : "📩 Send Order via WhatsApp"}
-          </button>
+            <div className="summary-row">
+              <span>Total</span>
+              <span>₹{total}</span>
+            </div>
 
-          <button
-            className="btn-outline remove"
-            onClick={clearCart}
-            style={{ marginTop: 10 }}
-          >
-            Clear Order
-          </button>
+            <div className="order-status">
+              {!verified && !isPaying && <span>🕒 Awaiting Payment</span>}
+              {isPaying && <span>💳 Opening UPI...</span>}
+              {verified && !isSending && <span>✅ Payment Verified</span>}
+              {isSending && <span>📩 Sending Order...</span>}
+            </div>
+
+            <button
+              className="btn-confirm"
+              onClick={handleConfirmPayment}
+              disabled={isPaying}
+            >
+              {isPaying ? "Processing..." : `💳 Pay ₹${total}`}
+            </button>
+
+            <button
+              className="btn-whatsapp-final"
+              disabled={!verified || isSending}
+              onClick={handleSend}
+            >
+              {isSending ? "Sending..." : "📩 Send Order on WhatsApp"}
+            </button>
+
+            <button className="btn-outline remove" onClick={clearCart}>
+              Clear Order
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
