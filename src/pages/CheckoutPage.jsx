@@ -63,11 +63,12 @@ export default function CheckoutPage() {
     return map;
   }
 
+  // ✅ ✅ ✅ FIXED UPI DEEP LINK (THIS WAS THE BUG)
   function getUpiLink() {
     const name = encodeURIComponent(STORE_NAME);
     const note = encodeURIComponent("Food Order Payment");
 
-    return `https://upi.link/pay?pa=${UPI_ID}&pn=${name}&am=${total}&cu=INR&tn=${note}`;
+    return `upi://pay?pa=${UPI_ID}&pn=${name}&am=${total}&cu=INR&tn=${note}`;
   }
 
   function whatsappLink(orderId) {
@@ -128,7 +129,8 @@ Delivery Slot: ${slot}`
     setIsSending(false);
     setIsPaying(true);
 
-    window.open(getUpiLink(), "_blank");
+    // ✅ DIRECT NATIVE REDIRECT TO UPI APPS
+    window.location.href = getUpiLink();
 
     setTimeout(() => {
       setVerified(true);
